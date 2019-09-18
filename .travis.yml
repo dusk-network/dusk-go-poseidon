@@ -1,0 +1,23 @@
+os:
+  - linux
+
+language: go
+
+branches:
+  only:
+  - master
+
+go:
+  - 1.13.x
+
+# Only clone the most recent commit.
+git:
+  depth: 1
+
+# Send a notification to the Dusk build Status Telegram channel once the CI build completes
+after_script:
+  - bash <(curl -s https://raw.githubusercontent.com/dusk-network/tools/master/bash/telegram_ci_notifications.sh)
+
+script:
+  - make lint
+  - make test
