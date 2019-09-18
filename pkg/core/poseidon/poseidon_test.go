@@ -7,7 +7,7 @@ import (
 )
 
 func TestPoseidonHash(t *testing.T) {
-	p := New()
+	p := DefaultPoseidon()
 
 	p.Write([]byte("hello"))
 	p.Write([]byte("world"))

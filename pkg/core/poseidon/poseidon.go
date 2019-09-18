@@ -2,11 +2,18 @@ package poseidon
 
 // Poseidon represents the structure for the main hash unit
 type Poseidon struct {
+	params *Params
 }
 
 // New returns an instance of Poseidon
-func New() Poseidon {
-	return Poseidon{}
+func New(params *Params) Poseidon {
+	return Poseidon{params: params}
+}
+
+// DefaultPoseidon will generate a Poseidon instance with DefaultParams
+func DefaultPoseidon() Poseidon {
+	params := DefaultParams()
+	return New(&params)
 }
 
 // Size ...
