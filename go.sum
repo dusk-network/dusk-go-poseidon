@@ -1,3 +1,5 @@
+github.com/bwesterb/go-ristretto v1.1.0 h1:KiOn1eqKcCe5X4Y6OPGS4u3XyVmxUnh/WAHU7bO3XXo=
+github.com/bwesterb/go-ristretto v1.1.0/go.mod h1:N/KzfPHVf0cM6so9lbr2hamEhlH9xev3NIj+B6p+Eyc=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -25,6 +27,12 @@ golang.org/x/tools v0.0.0-20190918181022-2c18af7e64b2 h1:SFRA3VO4CeRLvx6sO2Cevt/
 golang.org/x/tools v0.0.0-20190918181022-2c18af7e64b2/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/tools v0.0.0-20190918192907-c886270503e0 h1:LHzc8r5JnbNLDsA94VrV8ecQeZlmR7C1nV+dojw7VeQ=
 golang.org/x/tools v0.0.0-20190918192907-c886270503e0/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72 h1:bw9doJza/SFBEweII/rHQh338oozWyiFsBRHtrflcws=
+golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+golang.org/x/tools v0.0.0-20190923165424-71c3ad9cb704 h1:fX460I014KaN1M+eLORlzgG4YWP264Ze9Y2/TGkdhRY=
+golang.org/x/tools v0.0.0-20190923165424-71c3ad9cb704/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+golang.org/x/tools v0.0.0-20190923183622-59c6680fe2c1 h1:TpmF7otf6ojQkHEG+HgRNCR/WZWfATFqdBeuJW3WO6U=
+golang.org/x/tools v0.0.0-20190923183622-59c6680fe2c1/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
