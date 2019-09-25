@@ -2,6 +2,7 @@ package poseidon
 
 import (
 	"errors"
+	"math/big"
 
 	ristretto "github.com/bwesterb/go-ristretto"
 )
@@ -14,7 +15,17 @@ type Poseidon struct {
 
 // New returns an instance of Poseidon
 func New(params *Params) Poseidon {
-	return Poseidon{params: params, input: []ristretto.Scalar{}}
+	width := big.NewInt(int64(params.Width))
+	twoPowerW := big.NewInt(0).Exp(big.NewInt(2), width, nil)
+
+	firstElementScalar := ristretto.Scalar{}
+	firstElementScalar.SetBigInt(twoPowerW.Sub(twoPowerW, big.NewInt(1)))
+
+	// TODO Waiting for the resolution of https://github.com/dusk-network/Hades252/issues/17
+	// After resolution, this instruction should be removed
+	firstElementScalar.SetZero()
+
+	return Poseidon{params: params, input: []ristretto.Scalar{firstElementScalar}}
 }
 
 // DefaultPoseidon will generate a Poseidon instance with DefaultParams
@@ -34,17 +45,23 @@ func (p *Poseidon) BlockSize() int {
 	return 0
 }
 
-// Write will try to append the provided bytes to the input, converted as Scalar
+// Write will convert the bytes to Scalar with a reduction, and append the result to the inner structure
 func (p *Poseidon) Write(b []byte) (int, error) {
+	s := ristretto.Scalar{}
+	s.Derive(b)
+
+	return p.WriteScalar(s)
+}
+
+// WriteScalar will try to append the provided scalar to the input set
+func (p *Poseidon) WriteScalar(s ristretto.Scalar) (int, error) {
 	if p.params.Width == len(p.input) {
 		return 0, errors.New("Maximum width reached")
 	}
 
-	s := ristretto.Scalar{}
-	s.Derive(b)
 	p.input = append(p.input, s)
 
-	return len(b), nil
+	return len(s), nil
 }
 
 // Sum will compute the Poseidon digest value. The usage of the bytes parameter is currently not implemented
@@ -52,42 +69,46 @@ func (p *Poseidon) Sum(in []byte) []byte {
 	p.Pad()
 
 	keysOffset := 0
-	result := append([]ristretto.Scalar{}, p.input...)
 
 	for i := 0; i < p.params.FullRoundsBeginning; i++ {
-		p.applyFullRound(&p.params.RoundKeys[keysOffset])
-		keysOffset++
+		p.applyFullRound(&keysOffset)
 	}
 
 	for i := 0; i < p.params.PartialRounds; i++ {
-		p.applyPartialRound(&p.params.RoundKeys[keysOffset])
-		keysOffset++
+		p.applyPartialRound(&keysOffset)
 	}
 
 	for i := 0; i < p.params.FullRoundsEnd; i++ {
-		p.applyFullRound(&p.params.RoundKeys[keysOffset])
-		keysOffset++
+		p.applyFullRound(&keysOffset)
 	}
 
-	return result[1].Bytes()
+	return p.input[1].Bytes()
 }
 
-func (p *Poseidon) applyFullRound(roundKey *ristretto.Scalar) {
-	// Apply quintic SBox
-	for i := range p.input {
-		for k := 0; k < 5; k++ {
-			p.input[i] = *p.input[i].Mul(&p.input[i], &p.input[i])
-		}
+func (p *Poseidon) applyFullRound(keysOffset *int) {
+	// Add current round constant to all elements of input
+	for i := 0; i < len(p.input); i++ {
+		p.input[i] = *p.input[i].Add(&p.input[i], &p.params.RoundKeys[*keysOffset])
+		*keysOffset++
+	}
+
+	// Apply quintic SBox to every element
+	for i := 0; i < len(p.input); i++ {
+		QuinticSbox(&p.input[i])
 	}
 
 	p.input = *mulVec(&p.params.MDSMatrix, &p.input)
 }
 
-func (p *Poseidon) applyPartialRound(roundKey *ristretto.Scalar) {
-	// Apply quintic SBox
-	for k := 0; k < 5; k++ {
-		p.input[0] = *p.input[0].Mul(&p.input[0], &p.input[0])
+func (p *Poseidon) applyPartialRound(keysOffset *int) {
+	// Add current round constant to all elements of input
+	for i := 0; i < len(p.input); i++ {
+		p.input[i] = *p.input[i].Add(&p.input[i], &p.params.RoundKeys[*keysOffset])
+		*keysOffset++
 	}
+
+	// Apply quintic SBox to the first element
+	QuinticSbox(&p.input[0])
 
 	p.input = *mulVec(&p.params.MDSMatrix, &p.input)
 }
@@ -95,18 +116,27 @@ func (p *Poseidon) applyPartialRound(roundKey *ristretto.Scalar) {
 func mulVec(a *[][]ristretto.Scalar, b *[]ristretto.Scalar) *[]ristretto.Scalar {
 	result := make([]ristretto.Scalar, len(*b))
 
-	for j, row := range *a {
+	for j := 0; j < len(*a); j++ {
 		line := make([]ristretto.Scalar, len(*b))
-		for k, cell := range row {
-			line[k].Mul(&cell, &(*b)[k])
+
+		for k := 0; k < len((*a)[j]); k++ {
+			line[k].Mul(&(*a)[j][k], &(*b)[k])
 		}
 
-		for _, cell := range line {
-			result[j].Add(&result[j], &cell)
+		for k := 0; k < len(line); k++ {
+			result[j].Add(&result[j], &line[k])
 		}
 	}
 
 	return &result
+}
+
+// QuinticSbox will set *a to a^5
+func QuinticSbox(a *ristretto.Scalar) {
+	c := *a
+	for k := 0; k < 4; k++ {
+		a.Mul(a, &c)
+	}
 }
 
 // Pad will fill the input with zeroed scalars until its length equal the parametrization width

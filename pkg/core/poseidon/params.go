@@ -42,11 +42,11 @@ func GenerateMDSMatrix(width int) (*[][]ristretto.Scalar, error) {
 	ys := make([]ristretto.Scalar, width)
 
 	for i := 0; i < width; i++ {
-		x, err := unsignedNumberToScalar(i)
+		x, err := UnsignedNumberToScalar(i)
 		if err != nil {
 			return nil, err
 		}
-		y, err := unsignedNumberToScalar(i + width)
+		y, err := UnsignedNumberToScalar(i + width)
 		if err != nil {
 			return nil, err
 		}
@@ -65,8 +65,8 @@ func GenerateMDSMatrix(width int) (*[][]ristretto.Scalar, error) {
 	return &mds, nil
 }
 
-// unsignedNumberToScalar will attempt to convert an unsigned number to a Scalar
-func unsignedNumberToScalar(number interface{}) (*ristretto.Scalar, error) {
+// UnsignedNumberToScalar will attempt to convert an unsigned number to a Scalar
+func UnsignedNumberToScalar(number interface{}) (*ristretto.Scalar, error) {
 	switch v := number.(type) {
 
 	case uint8, uint16, uint, uint32, uint64:
