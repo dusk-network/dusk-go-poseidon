@@ -13,25 +13,21 @@ type Poseidon struct {
 	input  []ristretto.Scalar
 }
 
-// New returns an instance of Poseidon
-func New(params *Params) Poseidon {
+// New will generate an instance of Poseidon with Default parameters
+func New() Poseidon {
+	params := Default()
+	return NewWithParams(&params)
+}
+
+// NewWithParams returns an instance of Poseidon with the specified parameters
+func NewWithParams(params *Params) Poseidon {
 	width := big.NewInt(int64(params.Width))
 	twoPowerW := big.NewInt(0).Exp(big.NewInt(2), width, nil)
 
 	firstElementScalar := ristretto.Scalar{}
 	firstElementScalar.SetBigInt(twoPowerW.Sub(twoPowerW, big.NewInt(1)))
 
-	// TODO Waiting for the resolution of https://github.com/dusk-network/Hades252/issues/17
-	// After resolution, this instruction should be removed
-	firstElementScalar.SetZero()
-
 	return Poseidon{params: params, input: []ristretto.Scalar{firstElementScalar}}
-}
-
-// DefaultPoseidon will generate a Poseidon instance with DefaultParams
-func DefaultPoseidon() Poseidon {
-	params := DefaultParams()
-	return New(&params)
 }
 
 // Size will return the maximum allowed length for input elements

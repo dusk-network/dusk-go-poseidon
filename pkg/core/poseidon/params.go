@@ -18,8 +18,8 @@ type Params struct {
 	MDSMatrix           [][]ristretto.Scalar
 }
 
-// DefaultParams will generate a default parametrization for Poseidon
-func DefaultParams() Params {
+// Default will generate a default parametrization for Poseidon
+func Default() Params {
 	return Params{
 		Width:               9,
 		FullRoundsBeginning: 4,
