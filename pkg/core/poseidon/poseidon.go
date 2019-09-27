@@ -2,7 +2,6 @@ package poseidon
 
 import (
 	"errors"
-	"math/big"
 
 	ristretto "github.com/bwesterb/go-ristretto"
 )
@@ -21,11 +20,8 @@ func New() Poseidon {
 
 // NewWithParams returns an instance of Poseidon with the specified parameters
 func NewWithParams(params *Params) Poseidon {
-	width := big.NewInt(int64(params.Width))
-	twoPowerW := big.NewInt(0).Exp(big.NewInt(2), width, nil)
-
-	firstElementScalar := ristretto.Scalar{}
-	firstElementScalar.SetBigInt(twoPowerW.Sub(twoPowerW, big.NewInt(1)))
+    width := uint32(1) << uint32(params.Width)
+	firstElementScalar := ristretto.Scalar{width - 1}
 
 	return Poseidon{params: params, input: []ristretto.Scalar{firstElementScalar}}
 }
