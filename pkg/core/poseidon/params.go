@@ -21,7 +21,7 @@ type Params struct {
 // Default will generate a default parametrization for Poseidon
 func Default() Params {
 	return Params{
-		Width:               9,
+		Width:               5,
 		FullRoundsBeginning: 4,
 		PartialRounds:       59,
 		FullRoundsEnd:       4,

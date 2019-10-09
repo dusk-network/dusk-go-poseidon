@@ -20,7 +20,7 @@ func New() Poseidon {
 
 // NewWithParams returns an instance of Poseidon with the specified parameters
 func NewWithParams(params *Params) Poseidon {
-    width := uint32(1) << uint32(params.Width)
+	width := uint32(1) << uint32(params.Width-1)
 	firstElementScalar := ristretto.Scalar{width - 1}
 
 	return Poseidon{params: params, input: []ristretto.Scalar{firstElementScalar}}
