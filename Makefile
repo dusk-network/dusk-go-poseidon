@@ -6,6 +6,15 @@ TEST_LIST := $(shell go list ${PKG}/...)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/)
 .PHONY: all fmt lintdep lint testdep test coverage coverhtml testclean clean help
 all: lint test
+constants: ## Extract the go constants from the main repo
+	@mkdir -p vendor && \
+		curl -Lk -o vendor/dusk-poseidon-merkle-master.zip http://github.com/dusk-network/dusk-poseidon-merkle/archive/master.zip && \
+		unzip -o vendor/dusk-poseidon-merkle-master.zip -d vendor && \
+		rm vendor/dusk-poseidon-merkle-master.zip && \
+		cp vendor/dusk-poseidon-merkle-master/assets/mds.bin internal/mds.bin && \
+		cp vendor/dusk-poseidon-merkle-master/assets/ark.bin internal/ark.bin && \
+		./scripts/parse_constants.sh > pkg/core/poseidon/constants.go && \
+		gofmt -w pkg/core/poseidon/constants.go
 fmt: ## Format the go files
 	@gofmt -w ${GO_FILES}
 lintdep: ## Get the dependencies for the lint
